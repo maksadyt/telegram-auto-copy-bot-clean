@@ -6,7 +6,7 @@ from telegram.ext import (
     filters,
 )
 
-from config import ADMIN_USER_IDS
+from config import ADMIN_IDS
 from database import (
     add_pair,
     remove_pair,
@@ -17,7 +17,7 @@ from database import (
 
 
 def is_admin(user_id):
-    return str(user_id) in ADMIN_USER_IDS
+    return user_id in ADMIN_IDS
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
