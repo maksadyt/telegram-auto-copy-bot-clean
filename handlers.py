@@ -2,38 +2,34 @@ from telegram import Update
 from telegram.ext import (
     ContextTypes,
     MessageHandler,
+    CommandHandler,
     filters,
 )
 
-from config import ADMIN_IDS
+from config import ADMIN_USER_IDS
 from database import (
     add_pair,
-    get_pairs,
     remove_pair,
+    get_pairs,
     forwarding_enabled,
     set_forwarding,
 )
 
 
 def is_admin(user_id):
-    return user_id in ADMIN_IDS
+    return str(user_id) in ADMIN_USER_IDS
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not is_admin(update.effective_user.id):
-        await update.message.reply_text("❌ You are not authorized.")
-        return
-
-    text = (
-        "✅ Auto Copy Bot\n\n"
+    await update.message.reply_text(
+        "🤖 Auto Copy Bot\n\n"
+        "Commands:\n"
         "/addpair <source_id> <destination_id>\n"
         "/listpairs\n"
         "/removepair <pair_id>\n"
         "/startforwarding\n"
         "/stopforwarding"
     )
-
-    await update.message.reply_text(text)
 
 
 async def addpair(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -58,6 +54,8 @@ async def addpair(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         await update.message.reply_text(str(e))
+
+
 async def listpairs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_admin(update.effective_user.id):
         return
@@ -65,16 +63,17 @@ async def listpairs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     pairs = get_pairs()
 
     if not pairs:
-        await update.message.reply_text("No pairs added.")
+        await update.message.reply_text("No pairs found.")
         return
 
-    text = "📋 Current Pairs:\n\n"
+    text = ""
 
     for pair in pairs:
+        pair_id, source, destination = pair
         text += (
-            f"ID: {pair[0]}\n"
-            f"Source: {pair[1]}\n"
-            f"Destination: {pair[2]}\n\n"
+            f"ID: {pair_id}\n"
+            f"Source: {source}\n"
+            f"Destination: {destination}\n\n"
         )
 
     await update.message.reply_text(text)
@@ -121,8 +120,9 @@ async def stopforwarding(update: Update, context: ContextTypes.DEFAULT_TYPE):
     set_forwarding("off")
 
     await update.message.reply_text(
-        "⛔ Forwarding Stopped."
-    ) async def copy_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        "🛑 Forwarding Stopped."
+    )
+async def copy_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not forwarding_enabled():
         return
 
@@ -134,7 +134,7 @@ async def stopforwarding(update: Update, context: ContextTypes.DEFAULT_TYPE):
     pairs = get_pairs()
 
     for pair in pairs:
-        _, source, destination = pair
+        pair_id, source, destination = pair
 
         if source == chat_id:
             try:
@@ -150,4 +150,4 @@ async def stopforwarding(update: Update, context: ContextTypes.DEFAULT_TYPE):
 message_handler = MessageHandler(
     filters.ALL & filters.ChatType.CHANNEL,
     copy_messages,
-)
+    )
