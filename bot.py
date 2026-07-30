@@ -27,7 +27,7 @@ def main():
     app.add_handler(message_handler)
 
     print("Bot Started...")
-
+init_db()
     app.run_polling()
 
 if __name__ == "__main__":
