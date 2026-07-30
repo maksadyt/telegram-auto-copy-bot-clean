@@ -122,8 +122,7 @@ async def stopforwarding(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "⛔ Forwarding Stopped."
-    )
-    async def copy_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    ) async def copy_messages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not forwarding_enabled():
         return
 
