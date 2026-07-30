@@ -4,6 +4,7 @@ from telegram.ext import (
 )
 
 from config import BOT_TOKEN
+from database import init_db
 from handlers import (
     start,
     addpair,
@@ -26,9 +27,9 @@ def main():
 
     app.add_handler(message_handler)
 
-    print("Bot Started...")
+print("Bot Started...")
 init_db()
-    app.run_polling()
+app.run_polling()
 
 if __name__ == "__main__":
     main()
