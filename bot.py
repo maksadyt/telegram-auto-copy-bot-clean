@@ -15,7 +15,10 @@ from handlers import (
     message_handler,
 )
 
+
 def main():
+    init_db()
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -27,9 +30,9 @@ def main():
 
     app.add_handler(message_handler)
 
-print("Bot Started...")
-init_db()
-app.run_polling()
+    print("Bot Started...")
+    app.run_polling()
+
 
 if __name__ == "__main__":
     main()
